@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/core-js/2.1.4/core.min.js"></script>
+  <script src="//unpkg.com/@feathersjs/client@^3.0.0/dist/feathers.js"></script>
+  <script src="//unpkg.com/socket.io-client@1.7.3/dist/socket.io.js"></script>
+  <title>Demo for WebPush Notification - Client</title>
+  <style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .hide {
+    display:none;
+  }
+  button {
+    border:1px solid #eaeaea;
+    border-radius:5px;
+    padding:5px;
+    color:white;
+  }
+  #btnSubscribe {
+    background: green;
+  }
+  #btnUnsubscribe {
+    background: red;
+  }
+  </style>
+</head>
+
+<body>
+
+
+
+<div style="position:fixed;top:10px;right:5px;"><span id="error" style="background:#f2f2f2;padding:4px;border-radius:15px;"></span></div>
+<div id="isSubscribed" style="font-size:.8rem;"></div>
+
+<div style="margin:4rem auto;text-align:center;">
+  <h2>Web Push Notifications Demo</h2>
+  <button onclick="subscribe()" id="btnSubscribe" class="hide">Subscribe</button>
+  <button onclick="subscribe()" id="btnUnsubscribe" class="hide">Unsubscribe</button>
+</div>
+
+
+<script type="text/javascript">
+const appServerKey = 'BMIMGCxKLrSXKXaK1rxzU8Cy4NSkvw8k9XDM9lfxXPA16hDpvAMYj0bShNc4dYHgIMJpsAtAw4umAK7BePQfk30'
+
+// Socket.io is exposed as the `io` global.
+var socket = io('http://localhost:3050');
+// @feathersjs/client is exposed as the `feathers` global.
+var app = feathers();
+
+app.configure(feathers.socketio(socket));
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('service-worker.js')
+    permissionRequest()
+  });
+}
+
+
+
+function isSubscribed(){
+  navigator.serviceWorker.ready.then(function(reg) {
+    reg.pushManager.getSubscription().then(function(subscription) {
+      console.log(subscription)
+
+      app.service('subscription').find({
+        query: {
+          endpoint: subscription.endpoint
+        }
+      }).then(result=>{
+        console.log ( 'issubscribed=>' , result )
+        document.getElementById('isSubscribed').innerHTML = 'You need to susbscribe in order to receive notifications'
+        document.getElementById('btnSubscribe').className = ''
+        document.getElementById('btnUnsubscribe').className = 'hide'
+        if ( result.total ) {
+          document.getElementById('isSubscribed').innerHTML = 'You are subscribed!'
+          document.getElementById('btnSubscribe').className = 'hide'
+          document.getElementById('btnUnsubscribe').className = ''
+        }
+      }).catch(error=>{
+        console.log ( error )
+      })
+    }).catch(error=>{
+      console.log ( error )
+      //_self.mysubscription = error
+    })
+  }).catch(error=>{
+    console.log ( error )
+    //_self.mysubscription = error
+  })
+}
+
+function permissionRequest(){
+  return new Promise(function(resolve, reject) {
+    const permissionResult = Notification.requestPermission(function(result) {
+      resolve(result)
+    });
+
+    if (permissionResult) {
+      permissionResult.then(resolve, reject);
+    }
+  })
+  .then(function(permissionResult) {
+    if (permissionResult !== 'granted') {
+      throw new Error('We weren\'t granted permission.')
+    }
+  });
+}
+
+
+function urlB64ToUint8Array(base64String) {
+  console.log ( base64String )
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+function subscribe(){
+  let self = this
+  return navigator.serviceWorker.register('service-worker.js')
+    .then(function(registration) {
+      const subscribeOptions = {
+        userVisibleOnly: true,
+        applicationServerKey: urlB64ToUint8Array(appServerKey)
+      };
+      return registration.pushManager.subscribe(subscribeOptions);
+    }).then(function(pushSubscription) {
+      console.log('Received PushSubscription: ', JSON.stringify(pushSubscription));
+      app.service('subscription').create(pushSubscription)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+      return pushSubscription;
+    })
+}
+
+isSubscribed()
+
+</script>
+</body>
+</html>
