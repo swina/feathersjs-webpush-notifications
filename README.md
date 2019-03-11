@@ -2,7 +2,7 @@
 
 > Sample for Web Push Notifications using Feathersjs.
 
-**For details read [here](https://swina.github.io/2019/02/webpush-notifications-with-feathersjs/)
+**[Read the complete article](https://swina.github.io/2019/02/webpush-notifications-with-feathersjs/)**
 
 
 ## About
@@ -11,8 +11,7 @@ This project uses [Feathers](http://feathersjs.com). An open source web framewor
 
 ## Getting Started
 
-**You need @feathers
-Getting up and running is as easy as 1, 2, 3.
+Getting up and running is as easy as:
 
 1. Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
 
