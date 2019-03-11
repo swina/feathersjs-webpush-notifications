@@ -1,6 +1,9 @@
-# notifications
+# Web Push Notifications with Feathersjs
 
-> Sample for notifications system
+> Sample for Web Push Notifications using Feathersjs.
+
+**For details read [here](https://swina.github.io/2019/02/webpush-notifications-with-feathersjs/)
+
 
 ## About
 
@@ -14,7 +17,8 @@ Getting up and running is as easy as 1, 2, 3.
 2. Install your dependencies
 
     ```
-    cd path/to/notifications; npm install
+    cd path/to/notifications;
+    npm install
     ```
 
 3. Start your app
@@ -23,9 +27,6 @@ Getting up and running is as easy as 1, 2, 3.
     npm start
     ```
 
-## Testing
-
-Simply run `npm test` and all your tests in the `test/` directory will be run.
 
 ## Scaffolding
 
