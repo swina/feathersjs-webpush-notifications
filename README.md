@@ -11,17 +11,30 @@ This project uses [Feathers](http://feathersjs.com). An open source web framewor
 
 ## Getting Started
 
+**You need @feathers
 Getting up and running is as easy as 1, 2, 3.
 
 1. Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
-2. Install your dependencies
+
+2. Install Feathers generator
+```
+$ npm install -g @feathersjs/cli          # Install Feathers CLI
+```
+
+3. Install your dependencies
 
     ```
     cd path/to/notifications;
     npm install
     ```
 
-3. Start your app
+4. Add Authentication
+
+```
+$ feathers generate authentication
+```
+
+5. Start your app
 
     ```
     npm start
