@@ -30,7 +30,7 @@
     "jest": "jest"
   },
   "dependencies": {
-    "@feathersjs/authentication": "^2.1.13",
+    "@feathersjs/authentication": "^4.3.0",
     "@feathersjs/authentication-jwt": "^2.0.7",
     "@feathersjs/authentication-local": "^1.2.7",
     "@feathersjs/authentication-oauth2": "^1.2.5",
